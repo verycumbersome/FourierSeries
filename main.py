@@ -22,17 +22,22 @@ def func_prime(x):
     return out
 
 
-def display_func(function):
-    x = np.linspace(0, 20, 100)
-    y = np.linspace(0, 20, 100)
-    grid = np.meshgrid(x, y)
-
-    # Map function across numpy array 
-    out = np.vectorize(function)(x)
-
-    plt.plot(out)
+def fourier_transform(func, f, t):
+    # x(t) * e^-i2(pi)ft
+    out = func(t) * math.e ** (2 * math.pi * f * t)
 
     return out
+
+
+def display_func(func):
+    x = np.linspace(0, 20, 100)
+
+    # Map function across numpy array 
+    out = np.vectorize(func)(x)
+    fourier = np.vectorize(fourier_transform)(func, 1, x)
+
+    plt.plot(out)
+    plt.plot(fourier)
 
 if __name__=="__main__":
     display_func(func_orig)
