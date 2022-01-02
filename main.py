@@ -26,18 +26,22 @@ def fourier_transform(func, f, t):
     # x(t) * e^-i2(pi)ft
     out = func(t) * math.e ** (2 * math.pi * f * t)
 
+    integrate.quad(f1, np.inf, -np.inf)
+
     return out
 
 
 def display_func(func):
     x = np.linspace(0, 20, 100)
+    t = np.linspace(-1, 1, 100)
 
     # Map function across numpy array 
     out = np.vectorize(func)(x)
-    fourier = np.vectorize(fourier_transform)(func, 1, x)
+    fourier = np.vectorize(fourier_transform)(func, 2, t)
 
-    plt.plot(out)
+    # plt.plot(out)
     plt.plot(fourier)
+
 
 if __name__=="__main__":
     display_func(func_orig)
