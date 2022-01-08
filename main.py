@@ -57,20 +57,18 @@ def fourier_series(x, num_iter=1):
 
 
 def plot_func(function, span, ax, n=None):
-    x = np.linspace(-span, span, 200)
-    y = np.vectorize(function)(x, n) if n else np.vectorize(function)(x)
-
-    return x, y
-
-
-def play_sound():
     volume = 0.5     # range [0.0, 1.0]
     fs = 44100       # sampling rate, Hz, must be integer
     duration = 1.0   # in seconds, may be float
     f = 440.0        # sine frequency, Hz, may be float
 
-    # generate samples, note conversion to float32 array
-    samples = (np.sin(2*np.pi*np.arange(fs*duration)*f/fs)).astype(np.float32)
+    x = np.linspace(-(duration / 2), -(duration / 2), fs)
+    y = np.vectorize(function)(x, n) if n else np.vectorize(function)(x)
+
+    samples = (y).astype(np.float32)
+
+    print(samples)
+    print(len(samples))
 
     # for paFloat32 sample values must be in range [-1.0, 1.0]
     stream = p.open(format=pyaudio.paFloat32,
@@ -84,26 +82,57 @@ def play_sound():
     stream.stop_stream()
     stream.close()
 
-    p.terminate()
+    return x, y
+
+
+def play_sound():
+    volume = 0.5     # range [0.0, 1.0]
+    fs = 44100       # sampling rate, Hz, must be integer
+    duration = 1.0   # in seconds, may be float
+    f = 440.0        # sine frequency, Hz, may be float
+
+    # generate samples, note conversion to float32 array
+    samples = (np.sin(2*np.pi*np.arange(fs*duration)*f/fs)).astype(np.float32)
+
+    print(samples)
+    print(len(samples))
+
+    # for paFloat32 sample values must be in range [-1.0, 1.0]
+    stream = p.open(format=pyaudio.paFloat32,
+                                    channels=1,
+                                    rate=fs,
+                                    output=True)
+
+    # play. May repeat with different volume values (if done interactively) 
+    stream.write(volume*samples)
+
+    stream.stop_stream()
+    stream.close()
 
 
 if __name__=="__main__":
+    play_sound()
+
     x, y = plot_func(func_periodic, 50, ax1)
     sns.lineplot(x=x, y=y, ax=ax1)
 
-    x, y = plot_func(fourier_series, 50, ax2, 1)
+    print("asdf")
+    plt.show()
+    plt.pause(10)
+
+    x, y = plot_func(fourier_series, 50, ax2, 20)
     sns.lineplot(x=x, y=y, ax=ax2)
 
-    num_iter = 0
-    while num_iter < 20:
-        x, y = plot_func(fourier_series, 50, ax2, num_iter)
-        print(y)
+    # num_iter = 0
+    # while num_iter < 20:
+        # x, y = plot_func(fourier_series, 50, ax2, num_iter)
+        # print(y)
 
-        for line in ax2.lines:
-            line.set_ydata(y)
-            fig.canvas.draw()
-            fig.canvas.flush_events()
+        # for line in ax2.lines:
+            # line.set_ydata(y)
+            # fig.canvas.draw()
+            # fig.canvas.flush_events()
 
-        plt.pause(1)
+        # plt.pause(1)
 
 
